@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JavaScript - מדריך מעשי</title>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --surface2: #21262d;
+    --border: #30363d;
+    --yellow: #f0db4f;
+    --yellow-dim: #f0db4f22;
+    --blue: #58a6ff;
+    --green: #3fb950;
+    --purple: #bc8cff;
+    --red: #ff7b72;
+    --text: #e6edf3;
+    --text-dim: #8b949e;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Heebo', sans-serif;
+    line-height: 1.7;
+    min-height: 100vh;
+  }
+
+  /* Hero */
+  .hero {
+    background: radial-gradient(ellipse 80% 60% at 50% -10%, #f0db4f18, transparent),
+                radial-gradient(ellipse 50% 40% at 80% 100%, #58a6ff0a, transparent);
+    border-bottom: 1px solid var(--border);
+    padding: 60px 40px 50px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: 'JS';
+    position: absolute;
+    font-size: 300px;
+    font-weight: 900;
+    color: var(--yellow);
+    opacity: 0.03;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    letter-spacing: -10px;
+  }
+
+  .hero-badge {
+    display: inline-block;
+    background: var(--yellow-dim);
+    border: 1px solid var(--yellow);
+    color: var(--yellow);
+    padding: 4px 16px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 500;
+    margin-bottom: 20px;
+    letter-spacing: 1px;
+  }
+
+  .hero h1 {
+    font-size: clamp(36px, 6vw, 64px);
+    font-weight: 900;
+    line-height: 1.1;
+    margin-bottom: 16px;
+  }
+
+  .hero h1 span {
+    color: var(--yellow);
+  }
+
+  .hero p {
+    color: var(--text-dim);
+    font-size: 18px;
+    max-width: 500px;
+    margin: 0 auto 30px;
+  }
+
+  .topic-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+  }
+
+  .pill {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+  }
+
+  .pill:hover {
+    border-color: var(--yellow);
+    color: var(--yellow);
+  }
+
+  /* Nav */
+  nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(13,17,23,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 40px;
+    display: flex;
+    gap: 0;
+    overflow-x: auto;
+  }
+
+  nav a {
+    color: var(--text-dim);
+    text-decoration: none;
+    padding: 16px 20px;
+    font-size: 14px;
+    font-weight: 500;
+    border-bottom: 2px solid transparent;
+    white-space: nowrap;
+    transition: all 0.2s;
+  }
+
+  nav a:hover, nav a.active {
+    color: var(--yellow);
+    border-bottom-color: var(--yellow);
+  }
+
+  /* Main layout */
+  main {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 50px 24px 80px;
+  }
+
+  /* Section */
+  .section {
+    margin-bottom: 70px;
+    scroll-margin-top: 70px;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 28px;
+  }
+
+  .section-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+
+  .icon-yellow { background: var(--yellow-dim); }
+  .icon-blue   { background: #58a6ff18; }
+  .icon-green  { background: #3fb95018; }
+
+  .section-header h2 {
+    font-size: 26px;
+    font-weight: 700;
+  }
+
+  /* Explanation box */
+  .explain {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 22px 24px;
+    margin-bottom: 18px;
+    font-size: 15px;
+    line-height: 1.8;
+  }
+
+  .explain strong {
+    color: var(--yellow);
+  }
+
+  /* Code block */
+  .code-block {
+    background: #010409;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 18px;
+    font-size: 14px;
+  }
+
+  .code-header {
+    background: var(--surface2);
+    border-bottom: 1px solid var(--border);
+    padding: 10px 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .code-lang {
+    font-size: 12px;
+    color: var(--text-dim);
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .code-dots {
+    display: flex;
+    gap: 6px;
+  }
+
+  .dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+  }
+
+  .dot-r { background: #ff5f56; }
+  .dot-y { background: #ffbd2e; }
+  .dot-g { background: #27c93f; }
+
+  pre {
+    padding: 20px 22px;
+    overflow-x: auto;
+    line-height: 1.7;
+  }
+
+  code {
+    font-family: 'Consolas', 'SF Mono', monospace;
+    font-size: 13.5px;
+  }
+
+  /* Syntax highlighting */
+  .kw  { color: #ff7b72; }  /* keyword */
+  .fn  { color: #d2a8ff; }  /* function */
+  .str { color: #a5d6ff; }  /* string */
+  .num { color: #79c0ff; }  /* number */
+  .cm  { color: #8b949e; font-style: italic; }  /* comment */
+  .var { color: #ffa657; }  /* variable */
+  .op  { color: #f0db4f; }  /* operator */
+  .tag { color: #7ee787; }  /* html tag */
+  .at  { color: #79c0ff; }  /* attribute */
+  .prop{ color: #e6edf3; }
+
+  /* Annotation */
+  .annotation {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    background: var(--yellow-dim);
+    border: 1px solid #f0db4f44;
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin: 8px 0 16px;
+    font-size: 14px;
+  }
+
+  .annotation-icon {
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+
+  /* Step list */
+  .steps {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-bottom: 20px;
+  }
+
+  .step {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+  }
+
+  .step-num {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: var(--yellow);
+    color: #000;
+    font-weight: 700;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .step-text {
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  /* Sort table */
+  .sort-table {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 18px;
+  }
+
+  .sort-table table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .sort-table th {
+    background: var(--surface2);
+    padding: 12px 18px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-dim);
+    text-align: right;
+    letter-spacing: 0.5px;
+  }
+
+  .sort-table td {
+    padding: 11px 18px;
+    font-size: 15px;
+    border-top: 1px solid var(--border);
+  }
+
+  .sort-table tr:hover td {
+    background: var(--surface2);
+  }
+
+  .val-neg { color: var(--red); font-weight: 700; }
+  .val-pos { color: var(--green); font-weight: 700; }
+  .val-zero { color: var(--blue); font-weight: 700; }
+
+  /* Interactive demo */
+  .demo-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 18px;
+  }
+
+  .demo-box h3 {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-dim);
+    margin-bottom: 18px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 12px;
+  }
+
+  .demo-table-wrap {
+    overflow-x: auto;
+    margin-bottom: 16px;
+  }
+
+  .demo-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+
+  .demo-table th {
+    background: var(--surface2);
+    padding: 10px 16px;
+    text-align: right;
+    font-size: 12px;
+    color: var(--text-dim);
+    letter-spacing: 0.5px;
+  }
+
+  .demo-table td {
+    padding: 10px 16px;
+    border-top: 1px solid var(--border);
+  }
+
+  .btn-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    font-family: 'Heebo', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .btn-yellow { background: var(--yellow); color: #000; }
+  .btn-yellow:hover { background: #ffe066; }
+  .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text); }
+  .btn-outline:hover { border-color: var(--yellow); color: var(--yellow); }
+
+  .inputs-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr auto;
+    gap: 10px;
+    margin-bottom: 14px;
+    align-items: end;
+  }
+
+  .field-wrap label {
+    display: block;
+    font-size: 12px;
+    color: var(--text-dim);
+    margin-bottom: 6px;
+  }
+
+  .field-wrap input {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    padding: 9px 12px;
+    font-family: 'Heebo', sans-serif;
+    font-size: 14px;
+    outline: none;
+    transition: border 0.2s;
+  }
+
+  .field-wrap input:focus {
+    border-color: var(--yellow);
+  }
+
+  /* Return value cards */
+  .return-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin-bottom: 18px;
+  }
+
+  .return-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px;
+    text-align: center;
+  }
+
+  .return-val {
+    font-size: 32px;
+    font-weight: 900;
+    margin-bottom: 8px;
+  }
+
+  .return-card p {
+    font-size: 13px;
+    color: var(--text-dim);
+    line-height: 1.5;
+  }
+
+  /* Footer */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 24px 40px;
+    text-align: center;
+    color: var(--text-dim);
+    font-size: 13px;
+  }
+
+  @media (max-width: 600px) {
+    .hero { padding: 40px 20px 30px; }
+    nav { padding: 0 16px; }
+    main { padding: 30px 16px 60px; }
+    .return-cards { grid-template-columns: 1fr; }
+    .inputs-row { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-badge">📘 מדריך מעשי</div>
+  <h1>JavaScript<br><span>בשביל בני אדם</span></h1>
+  <p>מערכים, טבלאות, מיון והוספת נתונים — עם הסברים בעברית ודמואים חיים</p>
+</div>
+
+<nav>
+  <a href="javascript:void(0)" onclick="scrollToSection('arrays')" class="active">מערכים</a>
+  <a href="javascript:void(0)" onclick="scrollToSection('tables')">טבלאות</a>
+  <a href="javascript:void(0)" onclick="scrollToSection('sort')">מיון</a>
+  <a href="javascript:void(0)" onclick="scrollToSection('add')">הוספה</a>
+</nav>
+
+<main>
+
+  <!-- ====== SECTION 1: ARRAYS ====== -->
+  <section class="section" id="arrays">
+    <div class="section-header">
+      <div class="section-icon icon-yellow">📦</div>
+      <h2>מערכי אובייקטים</h2>
+    </div>
+
+    <div class="explain">
+      <strong>מערך</strong> הוא רשימה של ערכים. כשכל פריט ברשימה מכיל כמה שדות (כמו שם + שנים), הוא נקרא <strong>אובייקט</strong>. ביחד קוראים לזה <strong>מערך של אובייקטים</strong>.
+    </div>
+
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-lang">JavaScript</span>
+        <div class="code-dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div>
+      </div>
+      <pre><code><span class="cm">// מערך של כישורים — כל פריט הוא אובייקט עם שם ושנות ניסיון</span>
+<span class="var">skills_array</span> <span class="op">=</span> [
+    {<span class="prop">name</span>: <span class="str">"Java"</span>,   <span class="prop">years</span>: <span class="num">2</span>},
+    {<span class="prop">name</span>: <span class="str">"Python"</span>, <span class="prop">years</span>: <span class="num">3</span>},
+    {<span class="prop">name</span>: <span class="str">"HTML"</span>,   <span class="prop">years</span>: <span class="num">1</span>}
+];
+
+<span class="cm">// מערך של שפות — כל פריט הוא אובייקט עם שם ורמה</span>
+<span class="var">languages_array</span> <span class="op">=</span> [
+    {<span class="prop">name</span>: <span class="str">"English"</span>, <span class="prop">level</span>: <span class="str">"Fluent"</span>},
+    {<span class="prop">name</span>: <span class="str">"Hebrew"</span>,  <span class="prop">level</span>: <span class="str">"Native"</span>},
+    {<span class="prop">name</span>: <span class="str">"Spanish"</span>, <span class="prop">level</span>: <span class="str">"Intermediate"</span>}
+];</code></pre>
+    </div>
+
+    <div class="annotation">
+      <span class="annotation-icon">💡</span>
+      <span>הסוגריים המסולסלים <code style="color:var(--yellow)">{}</code> יוצרים אובייקט. הסוגריים המרובעים <code style="color:var(--yellow)">[]</code> יוצרים מערך. כשמשלבים את שניהם — מקבלים מערך של אובייקטים.</span>
+    </div>
+  </section>
+
+  <!-- ====== SECTION 2: TABLES ====== -->
+  <section class="section" id="tables">
+    <div class="section-header">
+      <div class="section-icon icon-blue">🗂️</div>
+      <h2>בניית טבלה עם JS</h2>
+    </div>
+
+    <div class="explain">
+      הרעיון הוא לקחת מערך, לעבור על כל הפריטים שלו בלולאה, ולבנות HTML של טבלה שיוצג בדפדפן.
+    </div>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-text"><strong>מוצאים את הטבלה בדף</strong> בעזרת <code style="color:var(--yellow)">document.querySelector</code></div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-text"><strong>מגדירים כותרות</strong> עם שורת <code style="color:var(--yellow)">&lt;tr&gt;&lt;th&gt;</code></div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-text"><strong>לולאה על המערך</strong> — בכל סיבוב מוסיפים שורה עם הנתונים</div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-text"><strong>שמים הכל בתוך הטבלה</strong> בעזרת <code style="color:var(--yellow)">innerHTML</code></div>
+      </div>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-lang">JavaScript</span>
+        <div class="code-dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div>
+      </div>
+      <pre><code><span class="kw">function</span> <span class="fn">show_skills_table</span>() {
+
+    <span class="cm">// שלב 1 — מוצאים את הטבלה בדף</span>
+    <span class="kw">let</span> <span class="var">table</span> <span class="op">=</span> document.<span class="fn">querySelector</span>(<span class="str">"#Skills-table"</span>);
+
+    <span class="cm">// שלב 2 — כותרות</span>
+    <span class="kw">let</span> <span class="var">txt</span> <span class="op">=</span> <span class="str">"&lt;tr&gt;&lt;th&gt;Skill&lt;/th&gt;&lt;th&gt;Years&lt;/th&gt;&lt;/tr&gt;"</span>;
+
+    <span class="cm">// שלב 3 — לולאה על המערך</span>
+    <span class="kw">for</span> (<span class="kw">let</span> <span class="var">i</span> <span class="op">=</span> <span class="num">0</span>; <span class="var">i</span> <span class="op">&lt;</span> skills_array.length; <span class="var">i</span><span class="op">++</span>) {
+        <span class="var">txt</span> <span class="op">+=</span> <span class="str">`&lt;tr&gt;
+            &lt;td&gt;${skills_array[i].name}&lt;/td&gt;
+            &lt;td&gt;${skills_array[i].years}&lt;/td&gt;
+        &lt;/tr&gt;`</span>;
+    }
+
+    <span class="cm">// שלב 4 — מכניסים לטבלה</span>
+    <span class="var">table</span>.innerHTML <span class="op">=</span> <span class="var">txt</span>;
+}</code></pre>
+    </div>
+
+    <div class="annotation">
+      <span class="annotation-icon">🏷️</span>
+      <span><code style="color:var(--yellow)">&lt;tr&gt;</code> = Table Row (שורה חדשה) &nbsp;|&nbsp; <code style="color:var(--yellow)">&lt;td&gt;</code> = Table Data (תא חדש) &nbsp;|&nbsp; <code style="color:var(--yellow)">&lt;th&gt;</code> = Table Header (כותרת)</span>
+    </div>
+
+    <!-- Live demo -->
+    <div class="demo-box">
+      <h3>🎮 דמו חי — טבלת כישורים</h3>
+      <div class="demo-table-wrap">
+        <table class="demo-table" id="skills-demo-table">
+          <tr><td colspan="2" style="text-align:center;color:var(--text-dim);padding:20px">לחץ על "הרץ" כדי לבנות את הטבלה מהמערך</td></tr>
+        </table>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-yellow" onclick="rebuildTable()">▶ הרץ את show_skills_table()</button>
+        <button class="btn btn-outline" onclick="resetSkillsTable()">↺ איפוס</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== SECTION 3: SORT ====== -->
+  <section class="section" id="sort">
+    <div class="section-header">
+      <div class="section-icon icon-yellow">🔀</div>
+      <h2>כפתור מיון טבלה</h2>
+    </div>
+
+    <div class="explain">
+      הפונקציה <strong>sort()</strong> מסדרת מערך. כדי שהיא תדע מה "לפני" ומה "אחרי", אנחנו נותנים לה פונקציית השוואה שמחזירה <strong>-1, 0, או 1</strong>.
+    </div>
+
+    <div class="return-cards">
+      <div class="return-card">
+        <div class="return-val val-neg">-1</div>
+        <p><strong>a</strong> בא לפני <strong>b</strong><br>(a קטן יותר או עדיף)</p>
+      </div>
+      <div class="return-card">
+        <div class="return-val val-pos">1</div>
+        <p><strong>a</strong> בא אחרי <strong>b</strong><br>(b קטן יותר או עדיף)</p>
+      </div>
+      <div class="return-card">
+        <div class="return-val val-zero">0</div>
+        <p>הם שווים<br>אין שינוי בסדר</p>
+      </div>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-lang">JavaScript</span>
+        <div class="code-dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div>
+      </div>
+      <pre><code><span class="cm">// מחכה ללחיצה על הכפתור</span>
+document.<span class="fn">querySelector</span>(<span class="str">"#btn_sort_by_year"</span>).onclick <span class="op">=</span> () => {
+
+    skills_array.<span class="fn">sort</span>((<span class="var">a</span>, <span class="var">b</span>) => {
+
+        <span class="kw">if</span> (<span class="var">a</span>.years <span class="op">&gt;</span> <span class="var">b</span>.years)
+            <span class="kw">return</span> <span class="num">-1</span>;  <span class="cm">// a לפני b</span>
+
+        <span class="kw">else if</span> (<span class="var">a</span>.years <span class="op">&lt;</span> <span class="var">b</span>.years)
+            <span class="kw">return</span> <span class="num">1</span>;   <span class="cm">// b לפני a</span>
+
+        <span class="kw">return</span> <span class="num">0</span>;        <span class="cm">// שווים — ללא שינוי</span>
+    });
+
+    <span class="fn">show_skills_table</span>(); <span class="cm">// רענון תצוגה</span>
+};</code></pre>
+    </div>
+
+    <!-- Sort table reference -->
+    <div class="sort-table">
+      <table>
+        <tr>
+          <th>ערך מוחזר</th>
+          <th>מה ה-JS עושה</th>
+          <th>תוצאה</th>
+        </tr>
+        <tr>
+          <td><span class="val-neg">-1</span></td>
+          <td>הזזת a לפני b</td>
+          <td>מיון יורד (הגדול קודם)</td>
+        </tr>
+        <tr>
+          <td><span class="val-pos">1</span></td>
+          <td>הזזת b לפני a</td>
+          <td>מיון עולה (הקטן קודם)</td>
+        </tr>
+        <tr>
+          <td><span class="val-zero">0</span></td>
+          <td>ללא שינוי</td>
+          <td>הסדר נשמר</td>
+        </tr>
+      </table>
+    </div>
+
+    <!-- Live demo -->
+    <div class="demo-box">
+      <h3>🎮 דמו חי — מיון לפי שנות ניסיון</h3>
+      <div class="demo-table-wrap">
+        <table class="demo-table" id="sort-demo-table">
+          <tr><th>Skill</th><th>Years</th></tr>
+        </table>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-yellow" onclick="sortByYearDesc()">מיון יורד (הכי הרבה קודם)</button>
+        <button class="btn btn-outline" onclick="sortByYearAsc()">מיון עולה (הכי פחות קודם)</button>
+        <button class="btn btn-outline" onclick="resetSortDemo()">איפוס</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== SECTION 4: ADD ====== -->
+  <section class="section" id="add">
+    <div class="section-header">
+      <div class="section-icon icon-green">➕</div>
+      <h2>הוספת נתונים לטבלה</h2>
+    </div>
+
+    <div class="explain">
+      כדי לאפשר למשתמש להוסיף שורות לטבלה, ב-HTML מוסיפים שדות קלט (<strong>input</strong>), וב-JS כותבים פונקציה שקוראת את הנתונים, דוחפת אותם למערך בעזרת <strong>push()</strong>, ואז מרענת את הטבלה.
+    </div>
+
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-lang">HTML</span>
+        <div class="code-dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div>
+      </div>
+      <pre><code><span class="cm">&lt;!-- שדות קלט + כפתור --&gt;</span>
+<span class="tag">&lt;input</span> <span class="at">type</span>=<span class="str">"text"</span> <span class="at">id</span>=<span class="str">"name-input"</span>   <span class="at">placeholder</span>=<span class="str">"Name"</span>  <span class="tag">/&gt;</span>
+<span class="tag">&lt;input</span> <span class="at">type</span>=<span class="str">"text"</span> <span class="at">id</span>=<span class="str">"course-input"</span> <span class="at">placeholder</span>=<span class="str">"Course"</span><span class="tag">/&gt;</span>
+<span class="tag">&lt;input</span> <span class="at">type</span>=<span class="str">"text"</span> <span class="at">id</span>=<span class="str">"grade-input"</span>  <span class="at">placeholder</span>=<span class="str">"Grade"</span> <span class="tag">/&gt;</span>
+
+<span class="tag">&lt;button</span> <span class="at">onclick</span>=<span class="str">"addStudent()"</span><span class="tag">&gt;</span>Add Student<span class="tag">&lt;/button&gt;</span></code></pre>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-lang">JavaScript</span>
+        <div class="code-dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div>
+      </div>
+      <pre><code><span class="kw">function</span> <span class="fn">addStudent</span>() {
+
+    <span class="cm">// שלב 1 — קוראים את הערכים מהשדות</span>
+    <span class="kw">let</span> <span class="var">name</span>   <span class="op">=</span> document.<span class="fn">querySelector</span>(<span class="str">"#name-input"</span>).value;
+    <span class="kw">let</span> <span class="var">course</span> <span class="op">=</span> document.<span class="fn">querySelector</span>(<span class="str">"#course-input"</span>).value;
+    <span class="kw">let</span> <span class="var">grade</span>  <span class="op">=</span> document.<span class="fn">querySelector</span>(<span class="str">"#grade-input"</span>).value;
+
+    <span class="cm">// שלב 2 — דוחפים אובייקט חדש למערך</span>
+    <span class="cm">// ה-+ לפני grade הופך string למספר</span>
+    Students.<span class="fn">push</span>({<span class="prop">name</span>: <span class="var">name</span>, <span class="prop">course</span>: <span class="var">course</span>, <span class="prop">grade</span>: <span class="op">+</span><span class="var">grade</span>});
+
+    <span class="cm">// שלב 3 — מאפסים את שדות הקלט</span>
+    document.<span class="fn">querySelector</span>(<span class="str">"#add-student-form"</span>).<span class="fn">reset</span>();
+
+    <span class="cm">// שלב 4 — מרעננים את הטבלה</span>
+    <span class="fn">showTable</span>();
+}</code></pre>
+    </div>
+
+    <div class="annotation">
+      <span class="annotation-icon">⚡</span>
+      <span>שים לב ל-<code style="color:var(--yellow)">+grade</code> — הפלוס הופך את הטקסט שהמשתמש הקליד (שהוא תמיד string) למספר אמיתי, כדי שנוכל לעשות עליו חשבון ומיון.</span>
+    </div>
+
+    <!-- Live demo -->
+    <div class="demo-box">
+      <h3>🎮 דמו חי — הוסף סטודנט</h3>
+      <div class="inputs-row">
+        <div class="field-wrap">
+          <label>שם</label>
+          <input type="text" id="demo-name" placeholder="Name">
+        </div>
+        <div class="field-wrap">
+          <label>קורס</label>
+          <input type="text" id="demo-course" placeholder="Course">
+        </div>
+        <div class="field-wrap">
+          <label>ציון</label>
+          <input type="number" id="demo-grade" placeholder="Grade" min="0" max="100">
+        </div>
+        <button class="btn btn-yellow" onclick="demoAddStudent()" style="margin-top:18px">הוסף</button>
+      </div>
+      <div class="btn-row" style="margin-bottom:14px">
+        <button class="btn btn-outline" onclick="demoSortByGrade()">מיון לפי ציון ↓</button>
+        <button class="btn btn-outline" onclick="demoSortByName()">מיון לפי שם א-ת</button>
+      </div>
+      <div class="demo-table-wrap">
+        <table class="demo-table" id="students-demo-table">
+          <tr><th>שם</th><th>קורס</th><th>ציון</th></tr>
+        </table>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  נבנה מתוך הסבר JavaScript · תוכן מבוסס על המסמך המקורי
+</footer>
+
+<script>
+  // =========== SKILLS DEMO ===========
+  let skills = [
+    {name: "Java",   years: 2},
+    {name: "Python", years: 3},
+    {name: "HTML",   years: 1}
+  ];
+
+  function renderSkillsTable(tableId, arr) {
+    const table = document.querySelector(`#${tableId}`);
+    let txt = "<tr><th>Skill</th><th>Years</th></tr>";
+    for (let i = 0; i < arr.length; i++) {
+      txt += `<tr><td>${arr[i].name}</td><td>${arr[i].years}</td></tr>`;
+    }
+    table.innerHTML = txt;
+  }
+
+  function rebuildTable() {
+    renderSkillsTable("skills-demo-table", skills);
+    document.querySelector("#skills-demo-table").style.animation = "none";
+    setTimeout(() => document.querySelector("#skills-demo-table").style.animation = "", 10);
+  }
+
+  function resetSkillsTable() {
+    document.querySelector("#skills-demo-table").innerHTML =
+      "<tr><td colspan='2' style='text-align:center;color:var(--text-dim);padding:20px'>לחץ על \"הרץ\" כדי לבנות את הטבלה מהמערך</td></tr>";
+  }
+
+  // =========== SORT DEMO ===========
+  let sortSkills = [
+    {name: "Java",   years: 2},
+    {name: "Python", years: 3},
+    {name: "HTML",   years: 1}
+  ];
+
+  function renderSortTable() {
+    const table = document.querySelector("#sort-demo-table");
+    let txt = "<tr><th>Skill</th><th>Years</th></tr>";
+    for (let s of sortSkills) {
+      txt += `<tr><td>${s.name}</td><td>${s.years}</td></tr>`;
+    }
+    table.innerHTML = txt;
+  }
+
+  function sortByYearDesc() {
+    sortSkills.sort((a,b) => {
+      if(a.years > b.years) return -1;
+      else if(a.years < b.years) return 1;
+      return 0;
+    });
+    renderSortTable();
+  }
+
+  function sortByYearAsc() {
+    sortSkills.sort((a,b) => {
+      if(a.years < b.years) return -1;
+      else if(a.years > b.years) return 1;
+      return 0;
+    });
+    renderSortTable();
+  }
+
+  function resetSortDemo() {
+    sortSkills = [
+      {name: "Java",   years: 2},
+      {name: "Python", years: 3},
+      {name: "HTML",   years: 1}
+    ];
+    renderSortTable();
+  }
+
+  renderSortTable();
+
+  // =========== STUDENTS DEMO ===========
+  let Students = [
+    {name: "John Doe",   course: "AI",           grade: 97},
+    {name: "Jane Smith", course: "Data Science",  grade: 87}
+  ];
+
+  function showStudentsTable() {
+    const table = document.querySelector("#students-demo-table");
+    let txt = "<tr><th>שם</th><th>קורס</th><th>ציון</th></tr>";
+    for (let s of Students) {
+      txt += `<tr><td>${s.name}</td><td>${s.course}</td><td>${s.grade}</td></tr>`;
+    }
+    table.innerHTML = txt;
+  }
+
+  function demoAddStudent() {
+    let name   = document.querySelector("#demo-name").value.trim();
+    let course = document.querySelector("#demo-course").value.trim();
+    let grade  = document.querySelector("#demo-grade").value;
+    if (!name) { alert("נא להכניס שם"); return; }
+    Students.push({name, course, grade: +grade});
+    document.querySelector("#demo-name").value   = "";
+    document.querySelector("#demo-course").value = "";
+    document.querySelector("#demo-grade").value  = "";
+    showStudentsTable();
+  }
+
+  function demoSortByGrade() {
+    Students.sort((a,b) => b.grade - a.grade);
+    showStudentsTable();
+  }
+
+  function demoSortByName() {
+    Students.sort((a,b) => a.name.localeCompare(b.name));
+    showStudentsTable();
+  }
+
+  showStudentsTable();
+
+  // =========== NAV ===========
+  function scrollToSection(id) {
+    document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+    document.querySelectorAll("nav a").forEach(a => a.classList.remove("active"));
+    event.currentTarget.classList.add("active");
+  }
+
+  window.addEventListener("scroll", () => {
+    const sections = document.querySelectorAll(".section");
+    const navLinks = document.querySelectorAll("nav a");
+    let current = "";
+    sections.forEach(s => {
+      if (window.scrollY >= s.offsetTop - 120) current = s.id;
+    });
+    const ids = ["arrays","tables","sort","add"];
+    navLinks.forEach((a, i) => {
+      a.classList.toggle("active", ids[i] === current);
+    });
+  });
+</script>
+
+</body>
+</html>
